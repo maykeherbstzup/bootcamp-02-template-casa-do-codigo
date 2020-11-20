@@ -20,8 +20,6 @@ public class NewAuthorRequest {
     private String description;
 
     public NewAuthorRequest(@NotBlank String name, @NotBlank @Email String email, @NotBlank @Size(max=400) String description) {
-        super();
-
         this.name = name;
         this.email = email;
         this.description = description;

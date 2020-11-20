@@ -1,4 +1,4 @@
-package com.zup.casadocodigo.Author;
+package com.zup.casadocodigo.Category;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/author")
-public class AuthorController {
+@RequestMapping("/category")
+public class CategoryController {
     @Autowired
-    private AuthorRepository authorRepository;
+    CategoryRepository categoryRepository;
 
     @PostMapping
-    public ResponseEntity<?> createAuthor(@RequestBody @Valid NewAuthorRequest newAuthorRequest) {
-        Author author = newAuthorRequest.toModel();
+    public ResponseEntity<?> createCategory(@RequestBody @Valid NewCategoryRequest newCategoryRequest) {
+        Category category = newCategoryRequest.toModel();
 
-        this.authorRepository.save(author);
+        this.categoryRepository.save(category);
 
         return ResponseEntity.ok().build();
     }
