@@ -1,5 +1,6 @@
 package com.zup.casadocodigo.Author;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,15 +16,15 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/author")
 public class AuthorController {
-    @PersistenceContext
-    private EntityManager em;
+    @Autowired
+    private AuthorRepository authorRepository;
 
     @PostMapping
     @Transactional
     public ResponseEntity<?> createAuthor(@RequestBody @Valid NewAuthorRequest newAuthorRequest) {
         Author author = newAuthorRequest.toModel();
 
-        em.persist(author);
+        this.authorRepository.save(author);
 
         return ResponseEntity.ok().build();
     }

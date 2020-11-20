@@ -8,20 +8,24 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "author")
+@Table(
+    name = "author",
+    uniqueConstraints = { @UniqueConstraint(name = "unique_email", columnNames = { "email" }) }
+)
 public class Author {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(unique = true, updatable = false, nullable = false)
+    private UUID id;
 
     @NotBlank
     private String name;
 
     @NotBlank
     @Email
-    @Column(unique = true)
     private String email;
 
     @NotBlank

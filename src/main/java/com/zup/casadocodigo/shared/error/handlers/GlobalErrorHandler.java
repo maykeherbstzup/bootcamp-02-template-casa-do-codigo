@@ -1,5 +1,6 @@
 package com.zup.casadocodigo.shared.error.handlers;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,5 +26,16 @@ class GlobalErrorHandler {
         }
 
         return errors;
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    Map<String, String> onDataIntegrityViolationException(DataIntegrityViolationException e) {
+		Map<String, String> error = new HashMap<String, String>();
+
+		error.put("message", e.getMostSpecificCause().getMessage());
+
+		return error;
     }
 }
