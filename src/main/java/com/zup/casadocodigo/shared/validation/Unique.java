@@ -15,6 +15,6 @@ public @interface Unique {
 
     Class<? extends Payload>[] payload() default {};
 
-    String className();
+    Class<?> entityClass();
     String fieldName();
 }

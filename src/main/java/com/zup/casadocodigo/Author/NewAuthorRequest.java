@@ -12,7 +12,7 @@ public class NewAuthorRequest {
 
     @NotBlank
     @Email
-    @Unique(className = "Author", fieldName = "email", message = "{email.unique}")
+    @Unique(entityClass = Author.class, fieldName = "email", message = "{email.unique}")
     private String email;
 
     @NotBlank

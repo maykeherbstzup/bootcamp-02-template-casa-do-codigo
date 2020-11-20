@@ -38,4 +38,15 @@ class GlobalErrorHandler {
 
 		return error;
     }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    Map<String, String> onIllegalArgumentException(IllegalArgumentException e) {
+		Map<String, String> error = new HashMap<String, String>();
+
+		error.put("message", e.getMessage());
+
+		return error;
+    }
 }

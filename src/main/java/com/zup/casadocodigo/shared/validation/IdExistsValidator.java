@@ -1,17 +1,13 @@
 package com.zup.casadocodigo.shared.validation;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
-@Component
-public class UniqueValidator implements ConstraintValidator<Unique, Object> {
+public class IdExistsValidator implements ConstraintValidator<IdExists, Object> {
     private Class<?> entityClass;
     private String fieldName;
 
@@ -19,7 +15,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
     EntityManager em;
 
     @Override
-    public void initialize(Unique constraintAnnotation) {
+    public void initialize(IdExists constraintAnnotation) {
         this.entityClass = constraintAnnotation.entityClass();
         this.fieldName = constraintAnnotation.fieldName();
     }
@@ -31,7 +27,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
 
         List<?> result = query.getResultList();
 
-        return result.isEmpty();
+        return !result.isEmpty();
     }
 
     private String getQuery() {
