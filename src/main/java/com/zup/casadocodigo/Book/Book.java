@@ -47,11 +47,11 @@ public class Book {
     private LocalDate publicationDate;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
     private Category category;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
     private Author author;
 
     @Deprecated
