@@ -34,6 +34,9 @@ public class Author {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Deprecated
+    private Author() {};
+
     public Author(@NotBlank String name, @NotBlank @Email String email, @NotBlank @Size(max=400) String description) {
         Assert.hasText(name, "Campo 'nome' não pode estar em branco");
         Assert.hasText(email, "Campo 'email' não pode estar em branco");

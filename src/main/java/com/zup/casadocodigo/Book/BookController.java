@@ -11,12 +11,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
+//2
 @RestController
 @RequestMapping("/book")
 public class BookController {
+    //1
     @Autowired
     BookRepository bookRepository;
 
+    //1
     @PersistenceContext
     EntityManager em;
 

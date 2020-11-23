@@ -5,23 +5,14 @@ import com.zup.casadocodigo.Author.Author;
 import com.zup.casadocodigo.Category.Category;
 import com.zup.casadocodigo.shared.validation.IdExists;
 import com.zup.casadocodigo.shared.validation.Unique;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
-import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
-@RestController
-@RequestMapping("/book")
 public class NewBookRequest {
     @NotBlank
     @Unique(entityClass = Book.class, fieldName = "title", message = "{book.title.unique}")
@@ -31,11 +22,9 @@ public class NewBookRequest {
     @Size(min = 1, max = 500)
     private String summary;
 
-    @NotBlank
     @Min(20)
     private BigDecimal price;
 
-    @NotBlank
     @Min(100)
     private int numberOfPages;
 
@@ -43,7 +32,6 @@ public class NewBookRequest {
     @Unique(entityClass = Book.class, fieldName = "isbn", message = "{book.isbn.unique}")
     private String isbn;
 
-    @NotBlank
     @Future
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate publicationDate;
@@ -57,37 +45,42 @@ public class NewBookRequest {
     private String authorId;
 
     public NewBookRequest(@NotBlank String title, @NotBlank @Size(min = 1, max = 500) String summary,
-                          @NotBlank @Min(20) BigDecimal price, @NotBlank @Min(100) int numberOfPages,
-                          @NotBlank String isbn, @NotBlank @Future LocalDate publicationDate,
+                          @Min(20) BigDecimal price, @Min(100) int numberOfPages, @NotBlank String isbn,
                           @NotNull String categoryId, @NotNull String authorId) {
         this.title = title;
         this.summary = summary;
         this.price = price;
         this.numberOfPages = numberOfPages;
         this.isbn = isbn;
-        this.publicationDate = publicationDate;
         this.categoryId = categoryId;
         this.authorId = authorId;
     }
 
     public Book toModel(EntityManager em) {
-        Author author = em.find(Author.class, this.authorId);
-        Category category = em.find(Category.class, this.categoryId);
+        Author author = em.find(Author.class, UUID.fromString(this.authorId));
+        Category category = em.find(Category.class, UUID.fromString(this.categoryId));
 
         Assert.state(author != null, "O autor informado não existe");
         Assert.state(category != null, "A categoria informada não existe");
 
-        Book book = new Book(
-            this.title,
-            this.summary,
-            this.price,
-            this.numberOfPages,
-            this.isbn,
-            this.publicationDate,
-            category,
-            author
-        );
+        Book book = new Book.Builder()
+                .setTitle(this.title)
+                .setSummary(this.summary)
+                .setPrice(this.price)
+                .setNumberOfPages(this.numberOfPages)
+                .setIsbn(this.isbn)
+                .setPublicationDate(this.publicationDate)
+                .setCategory(category)
+                .setAuthor(author)
+                .build();
 
         return book;
+    }
+
+    /**
+     * Setter necessário pois o a princípio o jackson não consegue serializar a data passando pelo construtor
+     */
+    public void setPublicationDate(LocalDate publicationDate) {
+        this.publicationDate = publicationDate;
     }
 }
