@@ -2,6 +2,7 @@ package com.zup.casadocodigo.Book;
 
 import com.zup.casadocodigo.Author.Author;
 import com.zup.casadocodigo.Category.Category;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -61,9 +62,23 @@ public class Book {
     private Book() {}
 
     private Book(@NotBlank String title, @NotBlank @Size(min = 1, max = 500) String contentAbstract,
-                 @NotBlank String summary, @NotBlank @Min(20) BigDecimal price, @NotBlank @Min(100) int numberOfPages,
+                 @NotBlank String summary, @NotNull @Min(20) BigDecimal price, @NotBlank @Min(100) int numberOfPages,
                  @NotBlank String isbn, @NotBlank @Future LocalDate publicationDate, @NotNull Category category,
                  @NotNull Author author) {
+
+        Assert.hasText(title, "Campo 'Titulo' não pode estar em branco");
+        Assert.hasText(contentAbstract, "Campo 'Resumo' não pode estar em branco");
+        Assert.isTrue(contentAbstract.length() <= 500, "Campo 'descrição' deve ter no máximo 500 caracteres");
+        Assert.hasText(summary, "Campo 'Sumário' não pode estar em branco");
+        Assert.notNull(price, "Campo 'Preço' não pode estar em branco");
+        Assert.isTrue(price.compareTo(new BigDecimal(20)) >= 0, "Campo 'preço' não pode ser menor que 20");
+        Assert.isTrue(numberOfPages >= 100, "Campo 'Número de páginas' não pode ser menor que 100");
+        Assert.hasText(isbn, "Campo 'ISBN' não pode estar em branco");
+        Assert.notNull(publicationDate, "Campo 'Data de publicação' não pode estar em branco");
+        Assert.notNull(category, "Campo 'Categoria' não pode estar em branco");
+        Assert.notNull(author, "Campo 'Autor' não pode estar em branco");
+
+
         this.title = title;
         this.contentAbstract = contentAbstract;
         this.summary = summary;
