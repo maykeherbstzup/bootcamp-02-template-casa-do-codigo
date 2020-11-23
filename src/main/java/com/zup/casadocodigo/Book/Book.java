@@ -29,6 +29,9 @@ public class Book {
 
     @NotBlank
     @Size(min = 1, max = 500)
+    private String contentAbstract;
+
+    @NotBlank
     private String summary;
 
     @NotNull
@@ -57,10 +60,12 @@ public class Book {
     @Deprecated
     private Book() {}
 
-    private Book(@NotBlank String title, @NotBlank @Size(min = 1, max = 500) String summary,
-            @NotBlank @Min(20) BigDecimal price, @NotBlank @Min(100) int numberOfPages, @NotBlank String isbn,
-            @NotBlank @Future LocalDate publicationDate, @NotNull Category category, @NotNull Author author) {
+    private Book(@NotBlank String title, @NotBlank @Size(min = 1, max = 500) String contentAbstract,
+                 @NotBlank String summary, @NotBlank @Min(20) BigDecimal price, @NotBlank @Min(100) int numberOfPages,
+                 @NotBlank String isbn, @NotBlank @Future LocalDate publicationDate, @NotNull Category category,
+                 @NotNull Author author) {
         this.title = title;
+        this.contentAbstract = contentAbstract;
         this.summary = summary;
         this.price = price;
         this.numberOfPages = numberOfPages;
@@ -70,8 +75,45 @@ public class Book {
         this.author = author;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContentAbstract() {
+        return contentAbstract;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public int getNumberOfPages() {
+        return numberOfPages;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
     public static class Builder {
         private String title;
+        private String contentAbstract;
         private String summary;
         private BigDecimal price;
         private int numberOfPages;
@@ -87,6 +129,11 @@ public class Book {
 
         public Builder setSummary(String summary) {
             this.summary = summary;
+            return this;
+        }
+
+        public Builder setContentAbstract(String contentAbstract) {
+            this.contentAbstract = contentAbstract;
             return this;
         }
 
@@ -123,6 +170,7 @@ public class Book {
         public Book build() {
             Book book = new Book(
                 this.title,
+                this.contentAbstract,
                 this.summary,
                 this.price,
                 this.numberOfPages,

@@ -47,4 +47,8 @@ public class Author {
         this.email = email;
         this.description = description;
     }
+
+    public String getName() {
+        return name;
+    }
 }

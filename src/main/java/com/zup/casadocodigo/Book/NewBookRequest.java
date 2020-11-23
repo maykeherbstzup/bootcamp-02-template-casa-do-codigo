@@ -20,6 +20,9 @@ public class NewBookRequest {
 
     @NotBlank
     @Size(min = 1, max = 500)
+    private String contentAbstract;
+
+    @NotBlank
     private String summary;
 
     @Min(20)
@@ -44,10 +47,11 @@ public class NewBookRequest {
     @IdExists(entityClass = Author.class, fieldName = "id", message = "{book.author.notExists}")
     private String authorId;
 
-    public NewBookRequest(@NotBlank String title, @NotBlank @Size(min = 1, max = 500) String summary,
-                          @Min(20) BigDecimal price, @Min(100) int numberOfPages, @NotBlank String isbn,
-                          @NotNull String categoryId, @NotNull String authorId) {
+    public NewBookRequest(@NotBlank String title, @NotBlank @Size(min = 1, max = 500) String contentAbstract,
+                          @NotBlank String summary, @Min(20) BigDecimal price, @Min(100) int numberOfPages,
+                          @NotBlank String isbn, @NotNull String categoryId, @NotNull String authorId) {
         this.title = title;
+        this.contentAbstract = contentAbstract;
         this.summary = summary;
         this.price = price;
         this.numberOfPages = numberOfPages;
@@ -65,6 +69,7 @@ public class NewBookRequest {
 
         Book book = new Book.Builder()
                 .setTitle(this.title)
+                .setContentAbstract(this.contentAbstract)
                 .setSummary(this.summary)
                 .setPrice(this.price)
                 .setNumberOfPages(this.numberOfPages)

@@ -1,9 +1,5 @@
 package com.zup.casadocodigo.Book;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.zup.casadocodigo.Category.Category;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/book")
@@ -34,12 +27,25 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookResponse>> getBooks() {
-        Query query = em.createQuery("SELECT NEW " + BookResponse.class.getName() + "(id, title) FROM Book b",
-                BookResponse.class);
+    public ResponseEntity<List<BookListResponse>> getBooks() {
+        Query query = em.createQuery("SELECT NEW " + BookListResponse.class.getName() + "(id, title) FROM Book b",
+                BookListResponse.class);
 
-        List<BookResponse> result = query.getResultList();
+        List<BookListResponse> result = query.getResultList();
 
         return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookDetailsResponse> getBook(@PathVariable(value = "id") UUID id) {
+        Book book = em.find(Book.class, id);
+
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        BookDetailsResponse bookDetailsResponse = new BookDetailsResponse(book);
+
+        return ResponseEntity.ok().body(bookDetailsResponse);
     }
 }
