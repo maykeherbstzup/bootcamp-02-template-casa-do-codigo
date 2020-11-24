@@ -3,6 +3,7 @@ package com.zup.casadocodigo.shared.error.handlers;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,8 +22,8 @@ class GlobalErrorHandler {
     Map<String, String> onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<String, String>();
 
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        for (ObjectError objectError : e.getAllErrors()) {
+            errors.put(objectError.getCode().toLowerCase(), objectError.getDefaultMessage());
         }
 
         return errors;

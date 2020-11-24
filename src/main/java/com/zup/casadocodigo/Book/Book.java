@@ -20,6 +20,11 @@ import java.util.UUID;
     }
 )
 public class Book {
+
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(unique = true, updatable = false, nullable = false)

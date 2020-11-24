@@ -5,7 +5,6 @@ import com.zup.casadocodigo.Author.Author;
 import com.zup.casadocodigo.Category.Category;
 import com.zup.casadocodigo.shared.validation.IdExists;
 import com.zup.casadocodigo.shared.validation.Unique;
-import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.validation.constraints.*;
@@ -63,9 +62,6 @@ public class NewBookRequest {
     public Book toModel(EntityManager em) {
         Author author = em.find(Author.class, UUID.fromString(this.authorId));
         Category category = em.find(Category.class, UUID.fromString(this.categoryId));
-
-        Assert.state(author != null, "O autor informado não existe");
-        Assert.state(category != null, "A categoria informada não existe");
 
         Book book = new Book.Builder()
                 .setTitle(this.title)
