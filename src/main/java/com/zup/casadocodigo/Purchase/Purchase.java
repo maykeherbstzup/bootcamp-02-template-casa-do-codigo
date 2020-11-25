@@ -1,5 +1,6 @@
 package com.zup.casadocodigo.Purchase;
 
+import com.zup.casadocodigo.Book.Book;
 import com.zup.casadocodigo.Location.Country;
 import com.zup.casadocodigo.Location.State;
 import org.springframework.util.Assert;
@@ -8,12 +9,13 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(
-    name = "purchase"
-)
+@Table(name = "purchase")
 public class Purchase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,7 +48,6 @@ public class Purchase {
     @ManyToOne
     private Country country;
 
-    // Obrigatório somente se o país tiver estado cadastrado
     @ManyToOne
     private State state;
 
@@ -56,13 +57,22 @@ public class Purchase {
     @NotBlank
     private String cep;
 
+    @NotNull
+    private BigDecimal total;
+
+    @NotNull
+    @Size(min = 1)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "purchase_id")
+    private List<PurchaseItem> items;
+
     @Deprecated
     private Purchase() {};
 
     private Purchase(@NotBlank @Email String email, @NotBlank String name, @NotBlank String lastName,
                     @NotBlank String document, @NotBlank String address, @NotBlank String complement,
                     @NotBlank String city, @NotBlank Country country, State state, @NotBlank String phone,
-                    @NotBlank String cep) {
+                    @NotBlank String cep, @NotNull BigDecimal total, @NotNull @Size(min = 1) List<PurchaseItem> items) {
         Assert.hasText(email, "Campo 'email' não pode estar em branco");
         Assert.hasText(name, "Campo 'Nome' não pode estar em branco");
         Assert.hasText(lastName, "Campo 'Sobrenome' não pode estar em branco");
@@ -73,6 +83,9 @@ public class Purchase {
         Assert.notNull(country, "Campo 'País' não pode estar em branco");
         Assert.hasText(phone, "Campo 'Telefone' não pode estar em branco");
         Assert.hasText(cep, "Campo 'Cep' não pode estar em branco");
+        Assert.notNull(new BigDecimal(0).compareTo(total) == 1, "Campo 'total' não pode ser nulo");
+        Assert.isTrue(total.compareTo(new BigDecimal(0)) == 1, "Campo 'total' não pode ser menor que zero");
+        Assert.isTrue(items.size() > 0, "Campo 'items' deve ser maior que zero");
 
         this.email = email;
         this.name = name;
@@ -85,6 +98,8 @@ public class Purchase {
         this.state = state;
         this.phone = phone;
         this.cep = cep;
+        this.total = total;
+        this.items = items;
     }
 
     public static class Builder {
@@ -99,6 +114,8 @@ public class Purchase {
         private State state;
         private String phone;
         private String cep;
+        private BigDecimal total;
+        private List<PurchaseItem> items;
 
         public Builder setEmail(String email) {
             this.email = email;
@@ -155,6 +172,16 @@ public class Purchase {
             return this;
         }
 
+        public Builder setTotal(BigDecimal total) {
+            this.total = total;
+            return this;
+        }
+
+        public Builder setItems(List<PurchaseItem> items) {
+            this.items = items;
+            return this;
+        }
+
         public Purchase build() {
             Purchase purchase = new Purchase(
                 this.email,
@@ -167,7 +194,9 @@ public class Purchase {
                 this.country,
                 this.state,
                 this.phone,
-                this.cep
+                this.cep,
+                this.total,
+                this.items
             );
 
             return purchase;

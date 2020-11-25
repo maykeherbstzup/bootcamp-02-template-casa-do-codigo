@@ -4,6 +4,7 @@ import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,6 +21,9 @@ public class Country {
     @NotBlank
     private String name;
 
+    @OneToMany(mappedBy = "country")
+    private List<State> states;
+
     @Deprecated
     private Country() {};
 
@@ -28,4 +32,12 @@ public class Country {
 
         this.name = name;
     };
+
+    public UUID getId() {
+        return id;
+    }
+
+    public List<State> getStates() {
+        return states;
+    }
 }

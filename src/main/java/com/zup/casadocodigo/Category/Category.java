@@ -27,7 +27,7 @@ public class Category {
     private String name;
 
     @Deprecated
-    private Category() {};
+    private Category() {}
 
     public Category(@NotBlank String name) {
         Assert.hasText(name, "Campo 'nome' não pode estar em branco");

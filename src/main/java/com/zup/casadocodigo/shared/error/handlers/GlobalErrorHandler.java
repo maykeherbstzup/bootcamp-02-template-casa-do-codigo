@@ -22,8 +22,8 @@ class GlobalErrorHandler {
     Map<String, String> onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<String, String>();
 
-        for (ObjectError objectError : e.getAllErrors()) {
-            errors.put(objectError.getCode().toLowerCase(), objectError.getDefaultMessage());
+        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
         return errors;

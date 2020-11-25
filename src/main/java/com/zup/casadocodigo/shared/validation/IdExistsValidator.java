@@ -23,6 +23,10 @@ public class IdExistsValidator implements ConstraintValidator<IdExists, String> 
 
     @Override
     public boolean isValid(String id, ConstraintValidatorContext context) {
+        if (id == null || id.isBlank()) {
+            return true;
+        }
+
         Query query = em.createQuery(this.getQuery());
         query.setParameter("fieldValue", UUID.fromString(id));
 

@@ -2,16 +2,18 @@ package com.zup.casadocodigo.Purchase;
 
 import com.zup.casadocodigo.Location.Country;
 import com.zup.casadocodigo.Location.State;
-import com.zup.casadocodigo.shared.validation.PurchaseDocument;
-import org.hibernate.validator.constraints.br.CNPJ;
-import org.hibernate.validator.constraints.br.CPF;
+import com.zup.casadocodigo.shared.validation.IdExists;
+import com.zup.casadocodigo.shared.validation.PurchaseRequest;
 
 import javax.persistence.EntityManager;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-@PurchaseDocument
+@PurchaseRequest
 public class NewPurchaseRequest {
     @NotBlank
     @Email
@@ -23,11 +25,8 @@ public class NewPurchaseRequest {
     @NotBlank
     private String lastName;
 
-    @CPF
-    private String cpf;
-
-    @CNPJ
-    private String cnpj;
+    @NotBlank
+    private String document;
 
     @NotBlank
     private String address;
@@ -39,9 +38,12 @@ public class NewPurchaseRequest {
     private String city;
 
     @NotBlank
+
+    // TODO criar validator pra UUID
+    @IdExists(entityClass = Country.class, fieldName = "id", message = "{location.country.notExists}")
     private String countryId;
 
-    // Obrigatório somente se o país tiver estado cadastrado
+    @IdExists(entityClass = State.class, fieldName = "id", message = "{location.state.notExists}")
     private String stateId;
 
     @NotBlank
@@ -50,29 +52,18 @@ public class NewPurchaseRequest {
     @NotBlank
     private String cep;
 
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj != null && cnpj.isBlank() ? null : cnpj;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf != null && cpf.isBlank() ? null : cpf;
-    }
+    @NotNull
+    @Valid
+    private NewPurchaseCartRequest cart;
 
     public NewPurchaseRequest(@NotBlank @Email String email, @NotBlank String name, @NotBlank String lastName,
-                              @NotBlank String address, @NotBlank String complement,
+                              @NotBlank String document, @NotBlank String address, @NotBlank String complement,
                               @NotBlank String city, @NotBlank String countryId, String stateId, @NotBlank String phone,
-                              @NotBlank String cep) {
+                              @NotBlank String cep, @NotNull NewPurchaseCartRequest cart) {
         this.email = email;
         this.name = name;
         this.lastName = lastName;
+        this.document = document;
         this.address = address;
         this.complement = complement;
         this.city = city;
@@ -80,28 +71,54 @@ public class NewPurchaseRequest {
         this.stateId = stateId;
         this.phone = phone;
         this.cep = cep;
+        this.cart = cart;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public String getCountryId() {
+        return countryId;
+    }
+
+    public String getStateId() {
+        return stateId;
+    }
+
+    public NewPurchaseCartRequest getCart() {
+        return cart;
     }
 
     public Purchase toModel(EntityManager em) {
         Country country = em.find(Country.class, UUID.fromString(this.countryId));
-        State state = em.find(State.class, UUID.fromString(this.stateId));
+        State state = null;
 
-        Purchase.Builder builder = new Purchase.Builder()
+        if (this.stateId != null && !this.stateId.isBlank()) {
+            state = em.find(State.class, UUID.fromString(this.stateId));
+        }
+
+        List<PurchaseItem> itemsList = this.cart.getItems()
+                .stream()
+                .map(item -> item.toModel(em))
+                .collect(Collectors.toList());
+
+       Purchase purchase = new Purchase.Builder()
                 .setEmail(this.email)
                 .setName(this.name)
                 .setLastName(this.lastName)
+                .setDocument(this.document)
                 .setAddress(this.address)
                 .setComplement(this.complement)
                 .setCity(this.city)
                 .setCountry(country)
                 .setState(state)
                 .setPhone(this.phone)
-                .setCep(this.cep);
+                .setCep(this.cep)
+                .setTotal(this.cart.getTotal())
+                .setItems(itemsList)
+                .build();
 
-        String document = this.cnpj != null ? this.cnpj : this.cpf;
-
-        builder.setDocument(document);
-
-        return builder.build();
+        return purchase;
     }
 }

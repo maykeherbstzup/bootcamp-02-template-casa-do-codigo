@@ -35,4 +35,12 @@ public class State {
         this.name = name;
         this.country = country;
     };
+
+    public UUID getId() {
+        return id;
+    }
+
+    public boolean belongsToCountry(Country country) {
+        return this.country.getId().equals(country.getId());
+    }
 }

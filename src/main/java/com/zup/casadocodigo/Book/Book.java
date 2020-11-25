@@ -8,7 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,11 +19,6 @@ import java.util.UUID;
     }
 )
 public class Book {
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(unique = true, updatable = false, nullable = false)
@@ -188,7 +182,7 @@ public class Book {
         }
 
         public Book build() {
-            Book book = new Book(
+            return new Book(
                 this.title,
                 this.contentAbstract,
                 this.summary,
@@ -199,8 +193,6 @@ public class Book {
                 this.category,
                 this.author
             );
-
-            return book;
         }
     }
 }

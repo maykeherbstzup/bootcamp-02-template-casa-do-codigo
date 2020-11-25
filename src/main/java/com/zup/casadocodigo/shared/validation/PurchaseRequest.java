@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PurchaseDocumentValidator.class)
-public @interface PurchaseDocument {
+@Constraint(validatedBy = PurchaseRequestValidator.class)
+public @interface PurchaseRequest {
     String message() default "{purchase.document.required}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
