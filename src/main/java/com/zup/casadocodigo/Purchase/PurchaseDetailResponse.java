@@ -36,7 +36,7 @@ public class PurchaseDetailResponse {
         this.country = purchase.getCountry().getName();
         this.phone = purchase.getPhone();
         this.cep = purchase.getCep();
-        this.total = purchase.getTotal();
+        this.total = purchase.getTotalCalculated();
 
         if (purchase.getState() != null) {
             this.state = purchase.getState().getName();
@@ -56,8 +56,6 @@ public class PurchaseDetailResponse {
         DiscountCoupon discountCoupon = purchase.getDiscountCoupon();
 
         if (discountCoupon != null) {
-            purchase.applyDiscountCoupom();
-
             this.hasCoupon = true;
             this.totalWithDiscount = purchase.getTotal();
         }
