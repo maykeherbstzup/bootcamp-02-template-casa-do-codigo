@@ -1,5 +1,6 @@
 package com.zup.casadocodigo.Purchase;
 
+import com.zup.casadocodigo.DiscountCoupon.DiscountCoupon;
 import com.zup.casadocodigo.Location.Country;
 import com.zup.casadocodigo.Location.State;
 import org.springframework.util.Assert;
@@ -68,6 +69,9 @@ public class Purchase {
     @JoinColumn(name = "purchase_id")
     private List<PurchaseItem> items;
 
+    @ManyToOne
+    private DiscountCoupon discountCoupon;
+
     @Deprecated
     private Purchase() {
     }
@@ -121,6 +125,29 @@ public class Purchase {
         return id;
     }
 
+    /**
+     * Uma vez associado o cupom, uma compra nunca pode ter essa informação alterada.
+     * O cupom só pode ser associado com uma compra que ainda não foi registrada no banco de dados
+     */
+    public void setDiscountCoupon(DiscountCoupon discountCoupon) {
+        if (this.id != null || this.discountCoupon != null) {
+            return;
+        }
+
+        this.discountCoupon = discountCoupon;
+    }
+
+    public void applyDiscountCoupom() {
+        if (this.discountCoupon == null) {
+            return;
+        }
+
+        BigDecimal percentage =  this.discountCoupon.getPercentage().divide(BigDecimal.valueOf(100));
+        BigDecimal discountValue = this.total.multiply(percentage);
+
+        this.total = this.total.subtract(discountValue);
+    }
+
     public static class Builder {
         private String email;
         private String name;
@@ -136,6 +163,7 @@ public class Purchase {
         private BigDecimal total;
         private List<PurchaseItem> items;
         private PurchaseStatus status;
+        private DiscountCoupon discountCoupon;
 
         public Builder setEmail(String email) {
             this.email = email;
@@ -207,6 +235,11 @@ public class Purchase {
             return this;
         }
 
+        public Builder setDiscountCoupon(DiscountCoupon discountCoupon) {
+            this.discountCoupon = discountCoupon;
+            return this;
+        }
+
         public Purchase build() {
             Purchase purchase = new Purchase(
                     this.email,
@@ -224,6 +257,8 @@ public class Purchase {
                     this.items,
                     this.status
             );
+
+            purchase.setDiscountCoupon(this.discountCoupon);
 
             return purchase;
         }

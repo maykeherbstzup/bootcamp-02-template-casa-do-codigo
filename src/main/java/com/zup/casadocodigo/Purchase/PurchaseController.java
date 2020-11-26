@@ -1,5 +1,7 @@
 package com.zup.casadocodigo.Purchase;
 
+import com.zup.casadocodigo.DiscountCoupon.DiscountCouponRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +21,13 @@ public class PurchaseController {
     @PersistenceContext
     EntityManager em;
 
+    @Autowired
+    DiscountCouponRepository discountCouponRepository;
+
     @PostMapping
     @Transactional
     public ResponseEntity<?> create(@RequestBody @Valid NewPurchaseRequest newPurchaseRequest, UriComponentsBuilder UriBuilder) {
-        Purchase purchase = newPurchaseRequest.toModel(em);
+        Purchase purchase = newPurchaseRequest.toModel(em, discountCouponRepository);
 
         em.persist(purchase);
 

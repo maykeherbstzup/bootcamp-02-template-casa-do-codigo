@@ -1,7 +1,6 @@
 package com.zup.casadocodigo.Book;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class BookDetailsResponse {
     private String title;

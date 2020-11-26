@@ -1,8 +1,11 @@
 package com.zup.casadocodigo.Purchase;
 
+import com.zup.casadocodigo.DiscountCoupon.DiscountCoupon;
+import com.zup.casadocodigo.DiscountCoupon.DiscountCouponRepository;
 import com.zup.casadocodigo.Location.Country;
 import com.zup.casadocodigo.Location.State;
 import com.zup.casadocodigo.Purchase.validation.PurchaseRequest;
+import com.zup.casadocodigo.Purchase.validation.ValidDiscountCoupon;
 import com.zup.casadocodigo.shared.validation.IdExists;
 import org.springframework.util.Assert;
 
@@ -40,8 +43,6 @@ public class NewPurchaseRequest {
     private String city;
 
     @NotBlank
-
-    // TODO criar validator pra UUID
     @IdExists(entityClass = Country.class, fieldName = "id", message = "{location.country.notExists}")
     private String countryId;
 
@@ -53,6 +54,9 @@ public class NewPurchaseRequest {
 
     @NotBlank
     private String cep;
+
+    @ValidDiscountCoupon
+    private String discountCouponCode;
 
     @NotNull
     @Valid
@@ -88,11 +92,15 @@ public class NewPurchaseRequest {
         return stateId;
     }
 
+    public void setDiscountCouponCode(String discountCouponCode) {
+        this.discountCouponCode = discountCouponCode;
+    }
+
     public NewPurchaseCartRequest getCart() {
         return cart;
     }
 
-    public Purchase toModel(EntityManager em) {
+    public Purchase toModel(EntityManager em, DiscountCouponRepository discountCouponRepository) {
         Country country = em.find(Country.class, UUID.fromString(this.countryId));
         State state = null;
 
@@ -104,6 +112,12 @@ public class NewPurchaseRequest {
                 .stream()
                 .map(item -> item.toModel(em))
                 .collect(Collectors.toList());
+
+        DiscountCoupon discountCoupon = discountCouponRepository.findByCode(this.discountCouponCode);
+
+        if (this.discountCouponCode != null) {
+            Assert.isTrue(discountCoupon != null && !discountCoupon.isExpired(), "Cumpo inválido");
+        }
 
         Purchase purchase = new Purchase.Builder()
                 .setEmail(this.email)
@@ -120,10 +134,13 @@ public class NewPurchaseRequest {
                 .setTotal(this.cart.getTotal())
                 .setItems(itemsList)
                 .setStatus(PurchaseStatus.INITIALIZED)
+                .setDiscountCoupon(discountCoupon)
                 .build();
 
         Assert.isTrue(purchase.getTotalCalculated().equals(this.cart.getTotal()),
                 "O total informado não condiz com o total calculado");
+
+        purchase.applyDiscountCoupom();
 
         return purchase;
     }

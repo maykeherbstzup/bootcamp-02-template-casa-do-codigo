@@ -38,4 +38,12 @@ public class DiscountCoupon {
         this.percentage = percentage;
         this.expirationDate = expirationDate;
     }
+
+    public BigDecimal getPercentage() {
+        return percentage;
+    }
+
+    public boolean isExpired() {
+        return LocalDate.now().isAfter(this.expirationDate);
+    }
 }

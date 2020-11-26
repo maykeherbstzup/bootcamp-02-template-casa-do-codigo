@@ -2,7 +2,6 @@ package com.zup.casadocodigo.Location;
 
 import com.zup.casadocodigo.shared.validation.IdExists;
 import com.zup.casadocodigo.shared.validation.Unique;
-import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotBlank;

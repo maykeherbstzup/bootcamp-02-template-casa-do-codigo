@@ -3,7 +3,6 @@ package com.zup.casadocodigo.Author;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
-import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
