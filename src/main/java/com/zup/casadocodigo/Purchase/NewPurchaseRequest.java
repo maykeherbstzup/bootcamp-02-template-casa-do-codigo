@@ -2,13 +2,15 @@ package com.zup.casadocodigo.Purchase;
 
 import com.zup.casadocodigo.Location.Country;
 import com.zup.casadocodigo.Location.State;
+import com.zup.casadocodigo.Purchase.validation.PurchaseRequest;
 import com.zup.casadocodigo.shared.validation.IdExists;
-import com.zup.casadocodigo.shared.validation.PurchaseRequest;
+import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.math.BigDecimal;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -103,7 +105,7 @@ public class NewPurchaseRequest {
                 .map(item -> item.toModel(em))
                 .collect(Collectors.toList());
 
-       Purchase purchase = new Purchase.Builder()
+        Purchase purchase = new Purchase.Builder()
                 .setEmail(this.email)
                 .setName(this.name)
                 .setLastName(this.lastName)
@@ -118,6 +120,9 @@ public class NewPurchaseRequest {
                 .setTotal(this.cart.getTotal())
                 .setItems(itemsList)
                 .build();
+
+        Assert.isTrue(purchase.getTotalCalculated().equals(this.cart.getTotal()),
+                "O total informado não condiz com o total calculado");
 
         return purchase;
     }

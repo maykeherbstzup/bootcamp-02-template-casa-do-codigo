@@ -30,4 +30,8 @@ public class NewPurchaseItemsRequest {
 
         return item;
     }
+
+    public String getBookId() {
+        return bookId;
+    }
 }

@@ -102,6 +102,15 @@ public class Purchase {
         this.items = items;
     }
 
+    public BigDecimal getTotalCalculated() {
+        BigDecimal total = this.items
+                .stream()
+                .map(item -> BigDecimal.valueOf(item.getQuantity()).multiply(item.getBook().getPrice()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return total;
+    }
+
     public static class Builder {
         private String email;
         private String name;

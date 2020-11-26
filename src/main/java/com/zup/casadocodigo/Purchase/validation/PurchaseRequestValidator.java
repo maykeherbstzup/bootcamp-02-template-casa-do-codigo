@@ -1,4 +1,4 @@
-package com.zup.casadocodigo.shared.validation;
+package com.zup.casadocodigo.Purchase.validation;
 
 import com.zup.casadocodigo.Location.Country;
 import com.zup.casadocodigo.Location.State;
@@ -20,7 +20,7 @@ public class PurchaseRequestValidator implements ConstraintValidator<PurchaseReq
     public boolean isValid(NewPurchaseRequest newPurchaseRequest, ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();
 
-        return this.validateDocument(newPurchaseRequest, context) && this.validateState(newPurchaseRequest, context) ;
+        return this.validateDocument(newPurchaseRequest, context) && this.validateState(newPurchaseRequest, context);
     }
 
     /**

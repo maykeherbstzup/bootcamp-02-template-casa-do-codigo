@@ -4,6 +4,7 @@ import com.zup.casadocodigo.Book.Book;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -27,5 +28,13 @@ public class PurchaseItem {
     public PurchaseItem(@NotNull Book book, @NotNull int quantity) {
         this.quantity = quantity;
         this.book = book;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 }
