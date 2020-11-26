@@ -119,6 +119,7 @@ public class NewPurchaseRequest {
                 .setCep(this.cep)
                 .setTotal(this.cart.getTotal())
                 .setItems(itemsList)
+                .setStatus(PurchaseStatus.INITIALIZED)
                 .build();
 
         Assert.isTrue(purchase.getTotalCalculated().equals(this.cart.getTotal()),

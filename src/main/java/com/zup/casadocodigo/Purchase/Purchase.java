@@ -1,6 +1,5 @@
 package com.zup.casadocodigo.Purchase;
 
-import com.zup.casadocodigo.Book.Book;
 import com.zup.casadocodigo.Location.Country;
 import com.zup.casadocodigo.Location.State;
 import org.springframework.util.Assert;
@@ -61,18 +60,23 @@ public class Purchase {
     private BigDecimal total;
 
     @NotNull
+    private PurchaseStatus status;
+
+    @NotNull
     @Size(min = 1)
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "purchase_id")
     private List<PurchaseItem> items;
 
     @Deprecated
-    private Purchase() {};
+    private Purchase() {
+    }
 
     private Purchase(@NotBlank @Email String email, @NotBlank String name, @NotBlank String lastName,
-                    @NotBlank String document, @NotBlank String address, @NotBlank String complement,
-                    @NotBlank String city, @NotBlank Country country, State state, @NotBlank String phone,
-                    @NotBlank String cep, @NotNull BigDecimal total, @NotNull @Size(min = 1) List<PurchaseItem> items) {
+                     @NotBlank String document, @NotBlank String address, @NotBlank String complement,
+                     @NotBlank String city, @NotBlank Country country, State state, @NotBlank String phone,
+                     @NotBlank String cep, @NotNull BigDecimal total, @NotNull @Size(min = 1) List<PurchaseItem> items,
+                     @NotNull PurchaseStatus status) {
         Assert.hasText(email, "Campo 'email' não pode estar em branco");
         Assert.hasText(name, "Campo 'Nome' não pode estar em branco");
         Assert.hasText(lastName, "Campo 'Sobrenome' não pode estar em branco");
@@ -86,6 +90,7 @@ public class Purchase {
         Assert.notNull(new BigDecimal(0).compareTo(total) == 1, "Campo 'total' não pode ser nulo");
         Assert.isTrue(total.compareTo(new BigDecimal(0)) == 1, "Campo 'total' não pode ser menor que zero");
         Assert.isTrue(items.size() > 0, "Campo 'items' deve ser maior que zero");
+        Assert.notNull(status, "Campo 'status' não pode estar em branco");
 
         this.email = email;
         this.name = name;
@@ -100,6 +105,7 @@ public class Purchase {
         this.cep = cep;
         this.total = total;
         this.items = items;
+        this.status = status;
     }
 
     public BigDecimal getTotalCalculated() {
@@ -109,6 +115,10 @@ public class Purchase {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return total;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public static class Builder {
@@ -125,6 +135,7 @@ public class Purchase {
         private String cep;
         private BigDecimal total;
         private List<PurchaseItem> items;
+        private PurchaseStatus status;
 
         public Builder setEmail(String email) {
             this.email = email;
@@ -191,21 +202,27 @@ public class Purchase {
             return this;
         }
 
+        public Builder setStatus(PurchaseStatus status) {
+            this.status = status;
+            return this;
+        }
+
         public Purchase build() {
             Purchase purchase = new Purchase(
-                this.email,
-                this.name,
-                this.lastName,
-                this.document,
-                this.address,
-                this.complement,
-                this.city,
-                this.country,
-                this.state,
-                this.phone,
-                this.cep,
-                this.total,
-                this.items
+                    this.email,
+                    this.name,
+                    this.lastName,
+                    this.document,
+                    this.address,
+                    this.complement,
+                    this.city,
+                    this.country,
+                    this.state,
+                    this.phone,
+                    this.cep,
+                    this.total,
+                    this.items,
+                    this.status
             );
 
             return purchase;

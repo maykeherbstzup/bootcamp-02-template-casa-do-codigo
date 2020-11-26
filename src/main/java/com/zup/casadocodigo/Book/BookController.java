@@ -2,12 +2,14 @@ package com.zup.casadocodigo.Book;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.*;
 
 @RestController
@@ -18,12 +20,14 @@ public class BookController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> createBook(@RequestBody @Valid NewBookRequest newBookRequest) {
+    public ResponseEntity<?> createBook(@RequestBody @Valid NewBookRequest newBookRequest, UriComponentsBuilder UriBuilder) {
         Book book = newBookRequest.toModel(em);
 
         em.persist(book);
 
-        return ResponseEntity.ok().build();
+        URI locationURI = UriBuilder.path("book/{id}").buildAndExpand(book.getId().toString()).toUri();
+
+        return ResponseEntity.created(locationURI).build();
     }
 
     @GetMapping
