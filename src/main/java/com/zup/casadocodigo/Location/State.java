@@ -36,11 +36,15 @@ public class State {
         this.country = country;
     };
 
+    public boolean belongsToCountry(Country country) {
+        return this.country.getId().equals(country.getId());
+    }
+
     public UUID getId() {
         return id;
     }
 
-    public boolean belongsToCountry(Country country) {
-        return this.country.getId().equals(country.getId());
+    public String getName() {
+        return name;
     }
 }

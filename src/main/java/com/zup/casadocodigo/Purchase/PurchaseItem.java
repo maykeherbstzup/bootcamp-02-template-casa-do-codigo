@@ -24,6 +24,10 @@ public class PurchaseItem {
     @ManyToOne
     private Purchase purchase;
 
+    @Deprecated
+    public PurchaseItem() {
+    }
+
     public PurchaseItem(@NotNull Book book, @NotNull int quantity) {
         this.quantity = quantity;
         this.book = book;

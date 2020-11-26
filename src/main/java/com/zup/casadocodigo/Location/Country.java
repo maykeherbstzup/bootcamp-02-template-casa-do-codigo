@@ -40,4 +40,8 @@ public class Country {
     public List<State> getStates() {
         return states;
     }
+
+    public String getName() {
+        return name;
+    }
 }
