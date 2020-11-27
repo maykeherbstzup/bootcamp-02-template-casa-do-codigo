@@ -33,7 +33,7 @@ public class BookDetailsResponseTest {
                 .build();
 
         BookDetailsResponse bookDetailsResponse = new BookDetailsResponse(book);
-        
+
         Assertions.assertEquals(bookDetailsResponse.getTitle(), "título");
         Assertions.assertEquals(bookDetailsResponse.getContentAbstract(), "resumo");
         Assertions.assertEquals(bookDetailsResponse.getSummary(), "sumario");
